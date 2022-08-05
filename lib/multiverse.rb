@@ -8,21 +8,17 @@ module Multiverse
 
     def db
       @db ||= begin
-        if db_name = ENV["DB"].presence
-          path = "#{Rails.application.config.paths["db"].first}/#{db_name}"
-
-          if Dir.exist?(path)
-            db_name
-          else
-            warn "Warning: Unknown DB #{db_name}" unless Dir.exist?(path)
-            nil
-          end
+        if Dir.exist?(db_dir)
+          db_env
+        else
+          warn "Warning: Unknown DB #{db_env}"
+          nil
         end
       end
     end
 
     def db_dir
-      "#{Rails.application.config.paths["db"].first}/#{db}"
+      "#{Rails.application.config.paths["db"].first}/#{db_env}"
     end
 
     def parent_class_name
@@ -31,6 +27,10 @@ module Multiverse
 
     def migrate_path
       "#{db_dir}/migrate"
+    end
+
+    def db_env
+      ENV["DB"].presence
     end
   end
 end
